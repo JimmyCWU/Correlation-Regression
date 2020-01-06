@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <title>Interface_React_Js </title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  <script script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+</head>
+<body>
+  <!-- bootstrap navbar -->
+  <div class="jumbotron text-center" style="margin-bottom:0">
+  <h1>Software Engineering2 BCPR280</h1>
+  <p>Assignment2</p>
+  <p>Student: Wu, Chieh-Ming<br> StudentID: 99193179</P>
+</div>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Assignment2</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Home</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Main content -->
+<div class="container-fluid">
+ <!-- react part -->
+ <div = "box1" style="margin-left: 0%;">
+ <div class="col-sm-3 col-md-6 bg-success">
+    <h1 style="color:Orange;">Regression</h1>
+    <div style="border:2px solid DodgerBlue; width:100%">
+           <div>
+			<div id="root">
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+ <!-- Vue part -->
+  <div class="col-sm-9 col-md-6 bg-warning">
+        <div id="appCacRegression">
+		<h1 style="color:Orange;">Regression </h1>
+		<div style="border:2px solid DodgerBlue;">
+		<div class="Content" style="margin-left: 0%;  ">
+        <h2><p class="text-info"> Vue.js Interface</p></h2>
+        <p class="text-primary">Please select data file 1</p>
+                        <div class="file-field">
+                            <input type="file" class="btn btn-primary btn-sm float-left" @change="onFileXChange">
+                        </div>
+						<br/>
+                        <p class="text-success">Please select data file 2</p>
+                        <div class="file-field">
+                            <input type="file" class="btn btn-primary btn-sm float-left" @change="onFileYChange">
+                        </div>
+                        <br />
+                        <br />
+
+						<input class="btn btn-danger" type="button" value="Caculate" v-on:click="calcuateReg" />
+                        <input class="btn btn-info" type="button" value="Reset" v-on:click="reloadPage" />
+                      <br />
+                      <br />
+                      <p>
+                        <p class="text-primary">File1:{{contentX}}</p>
+                        <p class="text-success">File2:{{contentY}}</p>
+                        <br />
+                        <p class="text-danger">{{erroMsg}}</p>
+
+
+		</div>
+
+						<div v-if="finalResults !== null">
+                            <p class="bg-primary text-white">Results</p>
+                            <table class="table table-borderless table-dark">
+                                <thead>
+                                    <tr>
+                                        <th>Collelation Coefficient </th>
+                                        <th>Collelation of Determination</th>
+                                        <th>Beta1</th>
+                                        <th>Beta0</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{{finalResults.coeff}}</td>
+                                        <td>{{finalResults.coeDeter}}</td>
+                                        <td>{{finalResults.beta1}}</td>
+                                        <td>{{finalResults.beta0}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+           </div>
+	</div>
+
+
+
+
+
+
+
+
+  <script type="text/babel">
+    class FileUpLoadRegCaculation extends React.Component {
+      constructor (props) {
+        super(props)
+
+        this.state = {content1: '',
+                      content2: '',
+                      finalResults: null
+        }
+        this.onFileChange1 = this.onFileChange1.bind(this)
+        this.onFileChange2 = this.onFileChange2.bind(this)
+      }
+      onFileChange1 (e) {
+        this.setState({content1: ''})
+        let files = e.target.files
+        if (files.length) {
+          this.loadNumbers1(files[0])
+        }
+      }
+      onFileChange2 (e) {
+        this.setState({content2: ''})
+        let files = e.target.files
+        if (files.length) {
+          this.loadNumbers2(files[0])
+        }
+      }
+      loadNumbers1 (file) {
+        let reader1 = new window.FileReader()
+        reader1.onload = (e) => {
+          this.setState({content1: e.target.result})
+        }
+        reader1.readAsText(file)
+      }
+      loadNumbers2 (file) {
+        let reader2 = new window.FileReader()
+        reader2.onload = (e) => {
+        this.setState({content2: e.target.result})
+        }
+        reader2.readAsText(file)
+      }
+      resetForm = () => {
+        window.location.reload();
+      }
+      caculateReg =()=>{
+         let theRegressionCaculation = new Regression();
+          theRegressionCaculation.getDataXYLoad(this.state.content1, this.state.content2);
+          theRegressionCaculation.getAllMathData();
+		      theRegressionCaculation.doCaculateCorrelation();
+		      theRegressionCaculation.caculateBeta1();
+		      theRegressionCaculation.caculateBeta0();
+          this.setState({
+            finalResults: {
+              coeff: theRegressionCaculation.correlationCoeff,
+				      coeDeter: theRegressionCaculation.corrOfDeter,
+				      beta1: theRegressionCaculation.beta1Result,
+              beta0: theRegressionCaculation.beta0Result
+            }
+          })
+      }
+      render () {
+        return (
+        <div>
+            <h2><p className="text-warning"> React.js Interface</p></h2>
+            <p className="text-primary">Please select data File 1</p>
+            <div className="file-field">
+            <input type='file' className="btn btn-warning btn-sm float-left" onChange={this.onFileChange1} />
+            </div>
+            <br />
+            <p className="text-primary">Please select data File 2</p>
+            <div className="file-field">
+            <input type='file' className="btn btn-warning btn-sm float-left" onChange={this.onFileChange2} />
+            </div>
+            <br />
+            <br />
+            <p>
+                <input className="btn btn-primary" type="button" value ="Caculate" onClick={this.caculateReg}></input>
+
+                <input className="btn btn-success" type="button" value ="Reset" onClick={this.resetForm}></input>
+            </p>
+            <br />
+            <div className="text-primary">
+            File1:{this.state.content1}
+            </div>
+            <br></br>
+            <div className="text-success">
+            File2:{this.state.content2}
+            </div>
+            <br/>
+
+            {!!this.state.finalResults &&
+              <React.Fragment>
+
+              <p class="bg-danger text-white">Results</p>
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Collelation Coefficient</th>
+                    <th>Collelation of Determination</th>
+                    <th>Beta1</th>
+                    <th>Beta0</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{this.state.finalResults.coeff}</td>
+                    <td>{this.state.finalResults.coeDeter}</td>
+                    <td>{this.state.finalResults.beta1}</td>
+                    <td>{this.state.finalResults.beta0}</td>
+                  </tr>
+                </tbody>
+                </table>
+
+                </React.Fragment>
+        }
+          </div>
+        )
+      }
+    }
+    const element = <FileUpLoadRegCaculation />
+    ReactDOM.render(
+      element,
+      document.getElementById('root')
+    )
+</script>
+
+
+<script>
+
+
+
+	var app =new Vue({
+	el: "#appCacRegression",
+	data: {
+		contentX: "",
+		contentY: "",
+		INVALIDLENGTH: "Data X does not have the same size as Data Y",
+		finalBETA1Result: "",
+		finalBETA0Result: "",
+		finalResults: null,
+		erroMsg: null
+	},
+	methods: {
+		reloadPage() {
+			window.location.reload();
+		},
+		onFileXChange(e) {
+			this.contentX = "";
+			let files = e.target.files;
+			if (files.length) {
+				this.loadDataX(files[0]);
+			}
+		},
+		loadDataX(file) {
+			let reader = new FileReader();
+			reader.onload = e => {
+				this.contentX = e.target.result;
+			};
+			reader.readAsText(file);
+		},
+		onFileYChange(e) {
+			this.contentY = "";
+			let files = e.target.files;
+			if (files.length) {
+				this.loadDataY(files[0]);
+			}
+		},
+		loadDataY(file) {
+			let reader = new FileReader();
+			reader.onload = e => {
+				this.contentY = e.target.result;
+			};
+			reader.readAsText(file);
+		},
+		calcuateReg() {
+			this.errorMsg = "";
+			this.finalResults = null;
+			let theCaculateReg;
+			theCaculateReg = new Regression();
+			theCaculateReg.getDataXYLoad(this.contentX, this.contentY);
+			if (theCaculateReg.errorMsg == "") {
+				theCaculateReg.getAllMathData();
+				theCaculateReg.doCaculateCorrelation();
+				theCaculateReg.caculateBeta1();
+				theCaculateReg.caculateBeta0();
+			} else {
+				this.erroMsg = theCaculateReg.errorMsg;
+			}
+			//this.finalBETA1Result = this.BETA1RESULT + theCaculateReg.beta1Result;
+			//this.finalBETA0Result = this.BETA0RESULT + theCaculateReg.beta0Result;
+			if (this.erroMsg == null) {
+				this.finalResults = {
+					coeff: theCaculateReg.correlationCoeff,
+					coeDeter: theCaculateReg.corrOfDeter,
+					beta1: theCaculateReg.beta1Result,
+					beta0: theCaculateReg.beta0Result
+				};
+			}
+		}
+	}
+});
+</script>
+  <script src="Correlation.js"></script>
+  <script src="Regression.js"></script>
+</body>
+
+</html>
